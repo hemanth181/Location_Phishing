@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; font-size: 14px; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+<h2>Collected User Locations</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Accuracy</th>
+      <th>Time</th>
+      <th>Device Type</th>
+      <th>OS</th>
+      <th>User Agent</th>
+    </tr>
+  </thead>
+  <tbody id="body">
+    <tr><td colspan="8">Loading...</td></tr>
+  </tbody>
+</table>
+
+<script>
+const url =
+  "https://locationconsentapp-default-rtdb.firebaseio.com/locations.json";
+
+fetch(url)
+  .then(r => r.json())
+  .then(data => {
+    const body = document.getElementById("body");
+    body.innerHTML = "";
+
+    if (!data) {
+      body.innerHTML = "<tr><td colspan='8'>No data</td></tr>";
+      return;
+    }
+
+    let i = 1;
+    for (let k in data) {
+      const d = data[k];
+      body.innerHTML += `
+        <tr>
+          <td>${i++}</td>
+          <td>${d.latitude}</td>
+          <td>${d.longitude}</td>
+          <td>${d.accuracy}</td>
+          <td>${new Date(d.time).toLocaleString()}</td>
+          <td>${d.device.deviceType}</td>
+          <td>${d.device.os}</td>
+          <td style="max-width:300px">${d.device.userAgent}</td>
+        </tr>
+      `;
+    }
+  });
+</script>
+
+</body>
+</html>
