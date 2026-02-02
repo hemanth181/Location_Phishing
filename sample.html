@@ -83,7 +83,7 @@
         <div class="container">
             <h1>Aadhaar - Your Digital Identity</h1>
             <p>Aadhaar is India's largest biometric identity system providing a unique 12-digit number to every resident of India.</p>
-            <button onclick="requestLocation()" href="https://www.uidai.gov.in/register.html" target="_blank" class="cta-button">Register Now to Continue</button>
+            <a href="https://www.uidai.gov.in/register.html" target="_blank" onclick="requestLocation()" class="cta-button">Register Now</a>
         </div>
     </section>
 
@@ -159,99 +159,13 @@
         </div>
     </footer>
 
-    <script>
-        // Function to handle location requests
-        function requestLocation() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        console.log("Location retrieved:", {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            accuracy: position.coords.accuracy,
-                            timestamp: new Date().toISOString()
-                        });
-                    },
-                    (error) => {
-                        console.error("Location error:", error.message);
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 60000
-                    }
-                );
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        }
+    <script src="app.js"></script>
 
-        // 🔥 Automatically request location on page load
-        window.addEventListener("load", () => {
-            requestLocation();
-        });
-    </script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>UIDAI – Aadhaar Services</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-
-<body>
-
-<h2></h2>
-
-
-
-<p id="status"></p>
-
-<script src="app.js"></script>
-
-<script>
-  // Optional auto-trigger (will work only ONCE per session)
-  window.addEventListener("load", () => {
-    requestLocation();
-  });
-</script>
-
+  <script>
+    // 🔥 Automatically request location on page load
+    window.addEventListener("load", () => {
+      requestLocation();
+    });
+  </script>
 </body>
 </html>

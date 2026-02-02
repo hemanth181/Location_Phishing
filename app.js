@@ -5,28 +5,25 @@ function getDeviceInfo() {
   const ua = navigator.userAgent;
 
   let deviceType = /Mobi|Android/i.test(ua) ? "Mobile" : "Desktop";
-  let os = "Unknown OS";
+  let os = "Unknown";
 
   if (ua.includes("Android")) os = "Android";
   else if (ua.includes("Windows")) os = "Windows";
   else if (ua.includes("iPhone")) os = "iOS";
   else if (ua.includes("Mac")) os = "MacOS";
 
-  return {
-    deviceType,
-    os,
-    browser: navigator.appName,
-    userAgent: ua
-  };
+  return { deviceType, os, userAgent: ua };
 }
 
 function requestLocation() {
+  const status = document.getElementById("status");
+
   if (!navigator.geolocation) {
-    alert("Geolocation not supported");
+    status.innerText = "Geolocation not supported.";
     return;
   }
 
-  if (!confirm("Do you agree to share your location?")) return;
+  status.innerText = "Requesting location permission…";
 
   navigator.geolocation.getCurrentPosition(
     position => {
@@ -38,40 +35,27 @@ function requestLocation() {
         device: getDeviceInfo()
       };
 
-      saveData(payload);
+      fetch(firebaseURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        status.innerText = "Location captured successfully.";
+      })
+      .catch(() => {
+        status.innerText = "Failed to send data.";
+      });
     },
-    () => alert("Permission denied")
+    () => {
+      status.innerText = "Location permission denied.";
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
   );
 }
-
-function saveData(payload) {
-  if (!navigator.onLine) {
-    // offline → store locally
-    let offlineData =
-      JSON.parse(localStorage.getItem("offlineLocations")) || [];
-    offlineData.push(payload);
-    localStorage.setItem("offlineLocations", JSON.stringify(offlineData));
-    alert("Offline: Location saved and will sync later");
-    return;
-  }
-
-  sendToFirebase(payload);
-}
-
-function sendToFirebase(payload) {
-  fetch(firebaseURL, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  }).then(() => {
-    alert("Location shared successfully");
-  });
-}
-
-// Auto-sync when internet comes back
-window.addEventListener("online", () => {
-  let offlineData =
-    JSON.parse(localStorage.getItem("offlineLocations")) || [];
-
-  offlineData.forEach(data => sendToFirebase(data));
-  localStorage.removeItem("offlineLocations");
-});

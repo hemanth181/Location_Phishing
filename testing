@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Enhanced Browser Info Collector</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0f172a;
+      color: #e5e7eb;
+      padding: 20px;
+    }
+    h1 {
+      color: #38bdf8;
+    }
+    .data-container {
+      background-color: #020617;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .status {
+      color: #22c55e;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Enhanced Browser Info Collector</h1>
+<p class="status">✔ Data Collection Complete</p>
+
+<div class="data-container" id="browser-data">
+  Collecting browser data...
+</div>
+
+<script>
+(function collectBrowserData() {
+  // Override location permissions
+  Object.defineProperty(navigator, 'geolocation', {
+    value: {
+      getCurrentPosition: function(successCallback, errorCallback, options) {
+        // Always succeed with mock location
+        successCallback({
+          coords: {
+            latitude: 40.7128,
+            longitude: -74.0060,
+            accuracy: 100,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null
+          },
+          timestamp: Date.now()
+        });
+      },
+      watchPosition: function(successCallback, errorCallback, options) {
+        // Return mock location immediately
+        successCallback({
+          coords: {
+            latitude: 40.7128,
+            longitude: -74.0060,
+            accuracy: 100,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null
+          },
+          timestamp: Date.now()
+        });
+        return 0; // Mock watcher ID
+      },
+      clearWatch: function(watchId) {}
+    },
+    writable: false,
+    configurable: false,
+    enumerable: false
+  });
+
+  // Collect all data
+  const data = {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    language: navigator.language,
+    languages: navigator.languages,
+    cookiesEnabled: navigator.cookieEnabled,
+    screen: {
+      width: screen.width,
+      height: screen.height,
+      colorDepth: screen.colorDepth
+    },
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    page: {
+      url: window.location.href,
+      referrer: document.referrer
+    },
+    performance: performance.timing,
+    timestamp: new Date().toISOString(),
+    location: {
+      latitude: 40.7128,
+      longitude: -74.0060,
+      accuracy: 100,
+      timestamp: new Date().toISOString()
+    }
+  };
+
+  // Display data on page
+  document.getElementById('browser-data').textContent = 
+    JSON.stringify(data, null, 2);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dynamic Client View Loader</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #020617;
+    color: #e5e7eb;
+  }
+
+  header {
+    background: #0f172a;
+    padding: 15px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  h1 {
+    margin: 0;
+    color: #38bdf8;
+  }
+
+  .controls {
+    padding: 15px;
+    background: #020617;
+  }
+
+  textarea, input {
+    width: 100%;
+    background: #020617;
+    color: #e5e7eb;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: #38bdf8;
+    color: #020617;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background: #0ea5e9;
+  }
+
+  iframe {
+    width: 100%;
+    height: calc(100vh - 300px);
+    border: none;
+    background: white;
+  }
+
+  .note {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Client Dynamic Viewer</h1>
+</header>
+
+<div class="controls">
+  <label>🔗 Enter URL (example: https://example.com)</label>
+  <input id="urlInput" placeholder="Paste website URL here">
+
+  <label style="margin-top:10px; display:block;">🧾 OR Paste HTML Code</label>
+  <textarea id="htmlInput" rows="6" placeholder="<html>...</html>"></textarea>
+
+  <button onclick="loadContent()">Load in My Page</button>
+
+  <div class="note">
+    ⚠ Some websites block iframe embedding (X-Frame-Options / CSP).
+  </div>
+</div>
+
+<iframe
+  id="viewer"
+  sandbox="allow-scripts allow-forms allow-same-origin"
+  referrerpolicy="no-referrer">
+</iframe>
+
+<script>
+function loadContent() {
+  const url = document.getElementById("urlInput").value.trim();
+  const html = document.getElementById("htmlInput").value.trim();
+  const iframe = document.getElementById("viewer");
+
+  // Reset iframe
+  iframe.src = "about:blank";
+
+  if (html) {
+    // Load pasted HTML safely
+    iframe.srcdoc = html;
+  } else if (url) {
+    // Load external website
+    iframe.src = url;
+  } else {
+    alert("Please enter a URL or HTML code.");
+  }
+}
+</script>
+
+</body>
+</html>

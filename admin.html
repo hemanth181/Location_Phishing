@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ccc; padding: 8px; font-size: 14px; }
-    th { background: #f0f0f0; }
-  </style>
 </head>
+
 <body>
 
 <h2>Collected User Locations</h2>
 
-<table>
+<table border="1" width="100%" cellpadding="6">
   <thead>
     <tr>
       <th>#</th>
@@ -23,13 +18,13 @@
       <th>Longitude</th>
       <th>Accuracy</th>
       <th>Time</th>
-      <th>Device Type</th>
+      <th>Device</th>
       <th>OS</th>
-      <th>User Agent</th>
+      <th>Map</th>
     </tr>
   </thead>
   <tbody id="body">
-    <tr><td colspan="8">Loading...</td></tr>
+    <tr><td colspan="8">Loading…</td></tr>
   </tbody>
 </table>
 
@@ -44,25 +39,32 @@ fetch(url)
     body.innerHTML = "";
 
     if (!data) {
-      body.innerHTML = "<tr><td colspan='8'>No data</td></tr>";
+      body.innerHTML =
+        "<tr><td colspan='8'>No data</td></tr>";
       return;
     }
 
     let i = 1;
     for (let k in data) {
       const d = data[k];
+      const device = d.device || {};
+
       body.innerHTML += `
         <tr>
           <td>${i++}</td>
           <td>${d.latitude}</td>
           <td>${d.longitude}</td>
-          <td>${d.accuracy}</td>
+          <td>${Math.round(d.accuracy || 0)}</td>
           <td>${new Date(d.time).toLocaleString()}</td>
-          <td>${d.device.deviceType}</td>
-          <td>${d.device.os}</td>
-          <td style="max-width:300px">${d.device.userAgent}</td>
-        </tr>
-      `;
+          <td>${device.deviceType || "Unknown"}</td>
+          <td>${device.os || "Unknown"}</td>
+          <td>
+            <a target="_blank"
+               href="https://www.google.com/maps?q=${d.latitude},${d.longitude}">
+               Open
+            </a>
+          </td>
+        </tr>`;
     }
   });
 </script>
